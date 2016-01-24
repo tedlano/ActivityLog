@@ -10,3 +10,16 @@ class Subject(models.Model):
     
     def __str__(self):
         return self.title
+
+class Activity(models.Model):
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    order = models.IntegerField(default=0)
+    link = models.CharField(max_length=255)
+    subject = models.ForeignKey(Subject)
+    
+    class Meta:
+        ordering = ['order',]
+        
+    def __str__(self):
+        return self.title

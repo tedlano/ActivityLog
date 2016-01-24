@@ -1,0 +1,17 @@
+<!--Step 26.3 add-->
+{% extends "layout.html" %}
+
+{% block title %}{{ activity.title }} - {{ activity.subject.title }}{% endblock %}
+
+{% block content %}
+<article>
+    <h2>
+        <a href="{% url 'subject:detail' pk=activity.subject.pk %}">
+            {{ activity.subject.title }}
+        </a>
+    </h2>
+    
+    <h3>{{ activity.title }}</h3>
+    {{ activity.link|linebreaks }}
+</article>
+{% endblock %}

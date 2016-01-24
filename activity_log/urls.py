@@ -16,14 +16,14 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 from . import views
 
-urlpatterns = [
+urlpatterns = [    
+    url(r'^subjects/', include('subjects.urls', namespace='subjects')),
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^$', views.home)
+    url(r'^$', views.home),
 ]
 
-from django.conf.urls import include, url
-from django.contrib import admin
-from django.contrib.staticfiles.urls import staticfiles_urlpatterns  # Step 21.2 add
+urlpatterns += staticfiles_urlpatterns()
