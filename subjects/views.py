@@ -16,47 +16,39 @@ def subject_detail(request, pk):
         'subject': subject
     }
     return render(request,  'subjects/subject_detail.html', context)
-    
+
+
 def activity_detail(request, subject_pk, activity_pk):
+    
+    # Get all Log entries for given activity
+    def getLogs(activity_pk):
+        try:
+            logs = Log.objects.filter(activity_id=activity_pk)
+            
+            # Change display of datetime variables
+            for log in logs:
+                log.start_time = log.start_time.strftime("%Y-%m-%d %H:%M")
+                log.end_time = log.end_time.strftime("%Y-%m-%d %H:%M")
+            
+        except Log.DoesNotExist:
+            logs = None
+            
+        return logs
+    
+    # Get activity from DB, Form object, and Log entries
     activity = get_object_or_404(Activity, subject_id=subject_pk, pk=activity_pk)
     form = LogForm(request.POST or None)
+    logs = getLogs(activity_pk)
     
-    try:
-        logs = Log.objects.filter(activity_id=activity_pk)
+    # Validate form
+    if request.method == "POST":
+        if form.is_valid():
+            instance = form.save(commit=False)
+            instance.activity = activity;
+            instance.save()
+            form = LogForm()
+            logs = getLogs(activity_pk)
         
-        for log in logs:
-            log.start_time = log.start_time.strftime("%Y-%m-%d %H:%M")
-            log.end_time = log.end_time.strftime("%Y-%m-%d %H:%M")
-            
-    except Log.DoesNotExist:
-        logs = None
-
-    if form.is_valid():
-        form.save()
-        # instance = form.save(commit=False)
-        # instance.save()
-        form = None
-    
-    
-    # try:
-    #     logs_temp = Log.objects.get(activity_id=activity_pk)
-    #     logs = []
-        
-    #     for log in logs_temp:
-    #         log_date = log.start_time.strftime("%Y-%m-%d")
-    #         log_comment = log.comment
-    #         log_duration = "-"
-            
-    #         if log.end_time is not None:
-    #             d
-                
-            
-    #         log.append({'date': log.
-            
-            
-    # except Log.DoesNotExist:
-    #     logs = None
-    
     context = {
         'activity': activity,
         'logs': logs,

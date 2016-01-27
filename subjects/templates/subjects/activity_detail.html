@@ -1,5 +1,5 @@
-<!--Step 26.3 add-->
 {% extends "base.html" %}
+{% load crispy_forms_tags %}
 
 {% block title %}{{ activity.title }} - {{ activity.subject.title }}{% endblock %}
 
@@ -8,29 +8,39 @@
     <h2>{{ activity.title }} <small>{{ activity.subject.title }}</small></h2>
     <p>{{ activity.description }}</p>
 </div>
-    
-<form method='POST' action=''>{% csrf_token %}
-    {{ form.as_p }}
-<input type='submit' value='Add Log Entry' />
-</form>
 
-<h2>Activity Log:</h2>
-<table class="table table-bordered table-striped">
-    <thead>
-        <tr>
-            <td>Start Date</td>
-            <td>End Date</td>
-            <td>Comment</td>
-        </tr>
-    </thead>  
+<div class="row">
     
-    {% for log in logs %}
-    <tr>
-        <td>{{ log.start_time }}</td>
-        <td>{{ log.end_time }}</td>
-        <td>{{ log.comment }}</td>
-    </tr>
-    {% endfor %}
-</table>
+    <div class="col-md-3">
+        <h2>Add New Entry:</h2>
+            {% crispy form %}
+        </form>
+        
+    </div>
+    
+    <div class="col-md-9">
+        <h2>Activity Log:</h2>
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <td>Start Date</td>
+                    <td>End Date</td>
+                    <td>Comment</td>
+                </tr>
+            </thead>  
+            
+            {% for log in logs %}
+            <tr>
+                <td>{{ log.start_time }}</td>
+                <td>{{ log.end_time }}</td>
+                <td>{{ log.comment }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+
+
+
     
 {% endblock %}
