@@ -27,8 +27,10 @@ def activity_detail(request, subject_pk, activity_pk):
             
             # Change display of datetime variables
             for log in logs:
-                log.start_time = log.start_time.strftime("%Y-%m-%d %H:%M")
-                log.end_time = log.end_time.strftime("%Y-%m-%d %H:%M")
+                log.created_at = log.created_at.strftime("%Y-%m-%d %H:%M")
+                hours = log.duration // 60
+                minutes = log.duration % 60
+                log.duration = "%d:%02d" % (hours, minutes)
             
         except Log.DoesNotExist:
             logs = None
@@ -37,22 +39,27 @@ def activity_detail(request, subject_pk, activity_pk):
     
     # Get activity from DB, Form object, and Log entries
     activity = get_object_or_404(Activity, subject_id=subject_pk, pk=activity_pk)
-    form = LogForm(request.POST or None)
     logs = getLogs(activity_pk)
     
     # Validate form
     if request.method == "POST":
-        if form.is_valid():
-            instance = form.save(commit=False)
-            instance.activity = activity;
-            instance.save()
-            form = LogForm()
-            logs = getLogs(activity_pk)
+        data = request.POST
+        hours = int(data['hour'])
+        minutes = int(data['min'])
+        seconds = int(data['sec'])
+        
+        if seconds >= 30:
+            minutes = minutes + 1
+            
+        dur = hours * 60 + minutes
+
+        logObj = Log(comment=data['comment'], duration=dur, activity=activity)
+        logObj.save()
+        logs = getLogs(activity_pk)
         
     context = {
         'activity': activity,
         'logs': logs,
-        'form': form
     }
     
     return render(request, 'subjects/activity_detail.html', context)

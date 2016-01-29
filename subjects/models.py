@@ -29,13 +29,13 @@ class Activity(models.Model):
         return self.title
         
 class Log(models.Model):
-    start_time = models.DateTimeField()
-    end_time = models.DateTimeField(blank=True)
+    duration = models.IntegerField()
+    created_at = models.DateTimeField(auto_now_add=True)
     comment = models.TextField(blank=True, default='')
     activity = models.ForeignKey(Activity)
     
     class Meta:
-        ordering = ['-start_time',]
+        ordering = ['-created_at',]
         
     def __str__(self):
         return self.comment
